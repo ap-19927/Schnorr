@@ -8,7 +8,6 @@ block content
       input(type="text", name="vk", id="vk", required)
     div
       input(type="submit", value="Log in" id='login')
-    //  input(onclick='httpGetAsync("/login")' type="submit", value="Log in" id='login')
 
   script(src='https://code.jquery.com/jquery-3.6.0.min.js', integrity='sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=', crossorigin='anonymous')
   script(src='/javascripts/sjcl.js')
@@ -22,5 +21,4 @@ block content
   script(src='/javascripts/login.js')
   if errors
     ul
-      for error in errors
-        li!= error.msg
+      li!= errors

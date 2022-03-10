@@ -1,10 +1,12 @@
 const CustomStrategy = require('passport-custom').Strategy,
-    User  = require('../models/user')
+      User  = require('../models/user')
 
 module.exports = (app, passport) => {
   passport.use(new CustomStrategy(
   async function(req, done) {
     //console.log('publicKey',req.body.publicKey)
+
+    //the search through mongoose docs is from https://masteringjs.io/tutorials/mongoose/find-all
     // Note no `await` here
     const cursor = User.find().cursor();
 

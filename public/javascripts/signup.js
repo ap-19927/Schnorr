@@ -13,3 +13,6 @@ jQuery("#formReg").submit(function (event) {
   document.getElementById("init").innerHTML = "This is your private key. Keep it secret. Keep it safe. Page expires in 30 seconds.\r";
   document.getElementById("key").innerHTML = s.key.toString();
 });
+
+//https://stackoverflow.com/questions/32084571/why-is-an-object-in-an-xmlhttprequest-sent-to-a-node-express-server-empty?noredirect=1&lq=1
+//https://stackoverflow.com/questions/42942176/what-callback-function-should-i-use-in-an-xmlhttprequest-to-render-the-response

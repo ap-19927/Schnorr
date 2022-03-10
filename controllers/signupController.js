@@ -1,6 +1,5 @@
 const User = require('../models/user');
 
-
 exports.signup_get = (req, res) => {
   if (req.session.challenge) return res.redirect('/')
   res.render('signup', { title: 'Signup' })

@@ -14,9 +14,7 @@ router.get('/', (req, res) => {
     //user: req.user
   })
 })
-// router.post('/', (req, res) => {
-//   res.redirect('/')
-// })
+
 /* Signup */
 router.get('/signup', signup_controller.signup_get);
 
