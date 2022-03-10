@@ -2,19 +2,19 @@ extends layout
 
 block content
   h1= title
-  form(action="/signup", method="post")
-    div
-      label Username:
-      input(type="text", name="username", required)
-    div
-      label Password:
-      input(type="password", name="password", required)
-    div
-      label Confirm Password:
-      input(type="password", name="passwordConfirmation", required)
-    div
-      input(type="submit", value="Sign up")
-  if errors
-    ul
-      for error in errors
-        li!= error.msg
+  form#formReg(action='/signup' method='POST')
+    input(type='submit', value='init')
+
+
+  p#init
+  p#key
+  script(src='https://code.jquery.com/jquery-3.6.0.min.js', integrity='sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=', crossorigin='anonymous')
+  script(src='/javascripts/sjcl.js')
+  script(src='/javascripts/bitArray.js')
+  script(src='/javascripts/aes.js')
+  script(src='/javascripts/sha256.js')
+  script(src='/javascripts/random.js')
+  script(src='/javascripts/bn.js')
+  script(src='/javascripts/ecc.js')
+  script(src='/javascripts/client.js')
+  script(src='/javascripts/signup.js')

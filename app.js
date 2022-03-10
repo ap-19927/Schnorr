@@ -19,8 +19,9 @@ const express = require('express'),
 const session = require('express-session'),
       MongoStore = require('connect-mongo');
       bodyParser = require('body-parser');
-
-const seconds = 240 //15 minutes = 15*60
+      passport = require('passport');
+      initializePassport = require('./utilities/passport-util');
+const seconds = 10 //15 minutes = 15*60
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -38,11 +39,14 @@ app.use(session({
   },
  name: "id"
 }))
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 //permission to serve static files
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static('public'))
+//app.use(express.static(path.join(__dirname, 'public')))
+initializePassport(app, passport);
 
 // View engine
 app.set('views', path.join(__dirname, 'views'))

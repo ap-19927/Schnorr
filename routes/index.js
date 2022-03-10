@@ -4,7 +4,7 @@ const router = require('express').Router();
 /* Home */
 router.get('/', (req, res) => {
   // Check if a user is logged-in, is authenticated
-  if ( !req.session.challenge ) {
+  if ( !req.isAuthenticated()) {
     res.redirect('/login')
     return
   }
@@ -14,7 +14,9 @@ router.get('/', (req, res) => {
     //user: req.user
   })
 })
-
+// router.post('/', (req, res) => {
+//   res.redirect('/')
+// })
 /* Signup */
 router.get('/signup', signup_controller.signup_get);
 

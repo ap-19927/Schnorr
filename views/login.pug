@@ -2,15 +2,24 @@ extends layout
 
 block content
   h1= title
-  form(action="/login", method="post")
+  form#formLogin(action='/', method='POST')
     div
-      label Username:
-      input(type="text", name="username", required)
+      label Private Key:
+      input(type="text", name="vk", id="vk", required)
     div
-      label Password:
-      input(type="password", name="password", required)
-    div
-      input(type="submit", value="Log in")
+      input(type="submit", value="Log in" id='login')
+    //  input(onclick='httpGetAsync("/login")' type="submit", value="Log in" id='login')
+
+  script(src='https://code.jquery.com/jquery-3.6.0.min.js', integrity='sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=', crossorigin='anonymous')
+  script(src='/javascripts/sjcl.js')
+  script(src='/javascripts/bitArray.js')
+  script(src='/javascripts/aes.js')
+  script(src='/javascripts/sha256.js')
+  script(src='/javascripts/random.js')
+  script(src='/javascripts/bn.js')
+  script(src='/javascripts/ecc.js')
+  script(src='/javascripts/client.js')
+  script(src='/javascripts/login.js')
   if errors
     ul
       for error in errors
