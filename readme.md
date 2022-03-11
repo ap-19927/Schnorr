@@ -1,34 +1,63 @@
 # breaker
 
-Schnorr Protocol-ish under Fiat-Shamir Transform for signup and login using sjcl library.
+Schnorr Signature for signup and login using sjcl library.
 
-generator `g`, 'publicN = g^n' unless otherwise noted.
+generator `g`, group `c384`
+
+## Schnorr signature (client side)
+
+#### `keyGen(key)`
+
+outputs
+
+ `publicKey = g^key`.
+
+#### `sign(message,key)`
+
+outputs
+
+random `randomness`,
+
+`commitment = g^randomness`,
+
+`challenge = hash(publicKey,commitment)`,
+
+`response = challenge*key + randomness`.
+
+#### `verify(commitment, response, message, publicKey)`
+
+outputs
+
+`challenge = hash(publicKey,commitment)`
+
+`g^response === (publicKey^challenge)*commitment`
 
 ## signup
-On initial signup, client generates random `key`, `commitment` and computes
-`challenge = hash(key,publicCommitment)`,
-`publicChallenge = publicKey^challenge`, and
-`response = challenge*key + commitment`.
-Sends `publicChallenge`,
-`publicCommitment` and
-`publicResponse`
-to server.
-Server verifies if `publicResponse = publicChallenge*publicCommitment`
+
+Schnorr signature with random `keyGen`
+
+store hashed publicKey in db.
 
 ## login
-Store hashed `publicKey` in database. On login `User.find()` along with the above verification process.
+Schnorr signature with form `keyGen`
 
-Using `passport-custom` to authenticate.
+`User.find()`
+
+Use `passport-custom` to store session.
 
 ## issues
-1. This app is only a test. It has not been formally reviewed as a security tool.
+1. This is not a security tool.
 
 1. please excuse the poorly written code including the lack of comments.
 
-1. client does verification and sends bool, rather than send points for server to multiply and verify.
+1. `verify` is not done server side but client side.
 
-2. sends `publicKey` in `POST`. Want to reveal less knowledge. Instead of `User.find()` in `passport-util.js`, provide proof of "I know a witness `key,publicKey` pair such that "key=log(publicKey)" without revealing the pair.
+2. sends `publicKey` in `POST`. Want to reveal less knowledge. Instead of `User.find()` in `passport-util.js`, provide proof of "I know a witness `key,publicKey` pair such that "publicKey in db" and "key=log(publicKey)" without revealing the pair.
 
+#### setup
+`git clone`
+`npm i`
+`npm run devstart`
 
 ### References
 

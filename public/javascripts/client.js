@@ -35,58 +35,79 @@ function hexStringToTypedArray(hexString) {
 
     return array;
 }
-
+const curve = sjcl.ecc.curves.c384;
+const generator = curve.G;
 const sch = (seed) => {
-  const curve = sjcl.ecc.curves.c384;
-  const generator = curve.G;
-  const hash = sjcl.hash.sha256.hash;
-  let key;
-  //console.log('key',seed)
-  if(typeof seed == 'object') key = seed;
-  else if(hexStringToTypedArray(seed)===0) return {};
-  else key = hexStringToTypedArray(seed);
-  //console.log('key',key)
-  key = sjcl.bn.fromBits(key);
-  //console.log('key',key)
-  const publicKey = generator.mult(key);
-  //console.log('publicKey',publicKey)
+  /**
+  key generation algo
+  **/
+  const keyGen = (s) => {
+    let key;
+    if(typeof s == 'object') key = s;
+    else if(hexStringToTypedArray(s)===0) return {};
+    else key = hexStringToTypedArray(s);
 
-  const commitment = sjcl.bn.fromBits(crypto.getRandomValues(new Uint32Array(32)))
-  const publicCommitment = generator.mult(commitment)
+    key = sjcl.bn.fromBits(key);
+    const publicKey = generator.mult(key);
+    console.log('key',key)
+    return {key: key, publicKey: publicKey}
+  }
 
-  const a = key.limbs
-  const b = publicCommitment.x.limbs
-  const c = publicCommitment.y.limbs
-  const preImage = new Int8Array(a+b+c+3); // https://stackoverflow.com/questions/14071463/how-can-i-merge-typedarrays-in-javascript
-  preImage.set(a.length,a, b.length,b, c.length,c); //https://crypto.stackexchange.com/questions/55162/best-way-to-hash-two-values-into-one
+  /**
+  signing algo
+  **/
+  const hash = (mess,commit) => {
+    console.log('hashmessage',mess.x)
+    a = mess.x.limbs
+    b = mess.y.limbs
+    c = commit.x.limbs
+    d = commit.y.limbs
+    const preImage = new Int16Array(a+b+c+d+4); // https://stackoverflow.com/questions/14071463/how-can-i-merge-typedarrays-in-javascript
+    preImage.set(a.length,a, b.length,b, c.length,c, d.length,d); //https://crypto.stackexchange.com/questions/55162/best-way-to-hash-two-values-into-one
+    return sjcl.bn.fromBits(sjcl.hash.sha256.hash(preImage));
+  }
+  const sign = (message,key) => {
+    const randomness = sjcl.bn.fromBits(crypto.getRandomValues(new Uint32Array(32)))
+    const commitment = generator.mult(randomness)
 
-  // challenge = hash(key,publicCommitment)
-  const challenge = sjcl.bn.fromBits(hash(preImage));
-  const publicChallenge =  publicKey.mult(challenge)
+    //challenge = hash(publicKey,commitment)
+    const challenge = hash(message,commitment)
 
-  // response = challenge*key + commitment
-  const response = challenge.mul(key).add(commitment);
-  const publicResponse = generator.mult(response);
+    // response = challenge*key + randomness
+    const response = challenge.mul(key).add(randomness);
 
-  //check if publicResponse = publicChallenge*publicCommitment
-  const verify = (publicResponse,publicChallenge,publicCommitment) => {
-    const publicChallengeTimesPublicCommitment = publicChallenge.mult2(1,1,publicCommitment)
+    return {commitment: commitment, response: response }
+  }
+
+
+  /**
+  verification algo
+  **/
+  //calculate challenge = hash(publicKey,commitment)
+  //check if generator^response = publicKey^challenge*commitment
+  const verify = (signature, message, publicKey) => {
+    const res = generator.mult(signature.response)
+    const challenge = hash(publicKey,signature.commitment)
+    const check = publicKey.mult2(challenge,1,signature.commitment)
+
     for(i=0;i<publicResponse.x.limbs.length;i++) {
-      if(publicResponse.x.limbs[i]!==publicChallengeTimesPublicCommitment.x.limbs[i] || publicResponse.y.limbs[i]!==publicChallengeTimesPublicCommitment.y.limbs[i]) return false
+      if(res.x.limbs[i]!==check.x.limbs[i] || res.y.limbs[i]!==check.y.limbs[i]) return false
     }
     return true
   }
-  return { key: key,
+
+
+  const keys = keyGen(seed);
+  const signature = sign(keys.publicKey,keys.key)
+  const verification = verify(signature,keys.publicKey,keys.publicKey)
+  return { key: keys.key,
           public: {
-            // publicResponse: {x: publicResponse.x.limbs, y: publicResponse.y.limbs},
-            // publicChallenge: {x: publicChallenge.x.limbs, y: publicChallenge.y.limbs},
-            // publicCommitment: {x: publicCommitment.x.limbs, y: publicCommitment.y.limbs},
-            // publicKey: {x: publicKey.x.limbs, y: publicKey.y.limbs},
-            publicKey: publicKey.x.toString(),
-            verify: verify(publicResponse,publicChallenge,publicCommitment),
+            publicKey: keys.publicKey.x.toString(),
+            verify: verification,
           },
         }
 }
+
 function redirect(res){
   window.location = res;
 }

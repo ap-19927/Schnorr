@@ -6,7 +6,7 @@ exports.signup_get = (req, res) => {
 };
 
 exports.signup_post = async (req, res, next) => {
-  if(req.body.verify){
+  if(req.body.verify===true){
     //console.log(req.body.publicKey.toString())
   // Create an USER object with escaped and trimmed data.
     const user = new User(
