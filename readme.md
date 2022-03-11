@@ -20,7 +20,7 @@ random `randomness`,
 
 `commitment = g^randomness`,
 
-`challenge = hash(publicKey,commitment)`,
+`challenge = hash(message,commitment)`,
 
 `response = challenge*key + randomness`.
 
@@ -28,22 +28,22 @@ random `randomness`,
 
 outputs
 
-`challenge = hash(publicKey,commitment)`
+`challenge = hash(message,commitment)`
 
 `g^response === (publicKey^challenge)*commitment`
 
 ## signup
 
-Schnorr signature with random `keyGen`
+Schnorr signature with `keyGen(random)`
 
-store hashed publicKey in db.
+store `hash(salt,publicKey)` in db.
 
 ## login
-Schnorr signature with form `keyGen`
+Schnorr signature with `keyGen(form)`
 
-`User.find()`
+`User.find(keyGen(form))`
 
-Use `passport-custom` to store session.
+`passport-custom` to authenticate.
 
 ## issues
 1. This is not a security tool.
@@ -53,11 +53,6 @@ Use `passport-custom` to store session.
 1. `verify` is not done server side but client side.
 
 2. sends `publicKey` in `POST`. Want to reveal less knowledge. Instead of `User.find()` in `passport-util.js`, provide proof of "I know a witness `key,publicKey` pair such that "publicKey in db" and "key=log(publicKey)" without revealing the pair.
-
-#### setup
-`git clone`
-`npm i`
-`npm run devstart`
 
 ### References
 
