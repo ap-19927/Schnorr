@@ -71,15 +71,15 @@ const sch = (seed) => {
   }
   const sign = (message,key) => {
     const randomness = sjcl.bn.fromBits(crypto.getRandomValues(new Uint32Array(32)))
-    console.log('rn',randomness.limbs)
+    //console.log('rn',randomness.limbs)
     const commitment = generator.mult(randomness)
-    console.log('com',commitment.x.limbs)
+    //console.log('com',commitment.x.limbs)
     //challenge = hash(publicKey,commitment)
     const challenge = hash(message,commitment)
-    console.log('ch',challenge.limbs)
+    //console.log('ch',challenge.limbs)
     // response = challenge*key + randomness
     const response = challenge.mul(key).add(randomness);
-    console.log('res',response.limbs)
+    //console.log('res',response.limbs)
     return {commitment: commitment, response: response }
   }
 
@@ -99,11 +99,11 @@ const sch = (seed) => {
     }
     return true
   }
-  const r1 = crypto.getRandomValues(new Uint32Array(16))
-  const r2 = crypto.getRandomValues(new Uint32Array(16))
-  console.log('a',r1)
-  console.log('b',r2)
-  console.log('hs',sjcl.bn.fromBits(sjcl.hash.sha256.hash(r1,r2)).limbs)
+  // const r1 = crypto.getRandomValues(new Uint32Array(16))
+  // const r2 = crypto.getRandomValues(new Uint32Array(16))
+  // console.log('a',r1)
+  // console.log('b',r2)
+  // console.log('hs',sjcl.bn.fromBits(sjcl.hash.sha256.hash(r1,r2)).limbs)
   const keys = keyGen(seed);
   const signature = sign(keys.publicKey,keys.key)
   const verification = verify(signature,keys.publicKey,keys.publicKey)
