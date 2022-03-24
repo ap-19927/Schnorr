@@ -22,15 +22,7 @@ module.exports = (app, passport) => {
     return await done(null, false);
   }
   ));
-  // passport.use(new CustomStrategy(
-  //   function(req, done) {
-  //     User.findOne({
-  //       username: req.body.username
-  //     }, function (err, user) {
-  //       done(err, user);
-  //     });
-  //   }
-  // ));
+
   passport.serializeUser(function(user, done) {
     done(null, user);
   });

@@ -32,6 +32,9 @@ outputs
 
 `g^response === (publicKey^challenge)*commitment`
 
+
+##### private(key, randomness), public(generator, group, publicKey, commitment, challenge, response)
+
 ## signup
 
 Schnorr signature with `keyGen(random)`

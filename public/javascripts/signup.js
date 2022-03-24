@@ -7,7 +7,6 @@ jQuery("#formReg").submit(function (event) {
   }
   xhr.open("POST", '/signup')
   xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-  console.log(crypto.getRandomValues(new Uint32Array(16)))
   const s = sch(crypto.getRandomValues(new Uint32Array(16)));
   const jsn = JSON.stringify(s.public)
   xhr.send(jsn)
