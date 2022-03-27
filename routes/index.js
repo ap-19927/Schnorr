@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
   }
 
   res.render('index', {
-    title: 'Breakersq',
+    title: 'S',
     //user: req.user
   })
 })
