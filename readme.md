@@ -1,4 +1,4 @@
-# breaker
+# S 
 
 Schnorr Signature for signup and login using sjcl library.
 
